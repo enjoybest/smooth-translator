@@ -1,8 +1,7 @@
 import _ from 'lodash'
-import $ from 'jquery'
 
 export function openExtensionPage(filename) {
-  var optionsUrl = chrome.extension.getURL(filename)
+  var optionsUrl = chrome.runtime.getURL(filename)
 
   chrome.tabs.query({}, function(tabs) {
     var optionTab = _.find(tabs, { url: optionsUrl })
@@ -75,7 +74,7 @@ export function stopPropagation(event) {
 
 // TODO: Move toggleLinkInspectMode function to a proper place
 export function toggleLinkInspectMode (flag) {
-  $('body').toggleClass('cst-link-inspect-mode', flag)
-  const enabled = $('body').is('.cst-link-inspect-mode')
+  document.body.classList.toggle('cst-link-inspect-mode', flag)
+  const enabled = document.body.classList.contains('cst-link-inspect-mode')
   chrome.runtime.sendMessage({ type: 'linkInspect', enabled })
 }

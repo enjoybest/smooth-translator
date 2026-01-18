@@ -8,7 +8,7 @@
     "description": "The short_name (maximum of 12 characters recommended) is a short version of the app's name."
   },
   "appDescription": {
-    "message": "让你专注于阅读的划词翻译工具",
+    "message": "[适配 Manifest V3]让你专注于阅读的划词翻译工具",
     "description": "The description of the application"
   },
   "browserActionTitle": {

@@ -1,6 +1,6 @@
-import { dispatchMessage } from './helpers/message'
-import { getSelection } from './helpers/selection'
-import { toggleLinkInspectMode } from './helpers/utils'
+import { dispatchMessage } from './helpers/message.js'
+import { getSelection } from './helpers/selection.js'
+import { toggleLinkInspectMode } from './helpers/utils.js'
 
 function selectionHandler(evt) {
   toggleLinkInspectMode(false)

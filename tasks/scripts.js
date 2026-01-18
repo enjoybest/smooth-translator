@@ -1,14 +1,20 @@
 import gulp from 'gulp'
 import gulpif from 'gulp-if'
-import { log, colors } from 'gulp-util'
 import named from 'vinyl-named'
 import webpack from 'webpack'
 import gulpWebpack from 'webpack-stream'
 import plumber from 'gulp-plumber'
 import livereload from 'gulp-livereload'
-import args from './lib/args'
+import args from './lib/args.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+import { VueLoaderPlugin } from 'vue-loader'
 
-const path = require('path')
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const projectRoot = path.resolve(__dirname, '..')
+
 const ENV = args.production ? 'production' : 'development'
 
 gulp.task('scripts', (cb) => {
@@ -19,16 +25,15 @@ gulp.task('scripts', (cb) => {
     }))
     .pipe(named())
     .pipe(gulpWebpack({
+      mode: ENV,
       devtool: args.sourcemaps ? 'inline-source-map' : false,
       watch: args.watch,
       plugins: [
+        new VueLoaderPlugin(),
         new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify(ENV),
           'process.env.VENDOR': JSON.stringify(args.vendor)
         })
-      ].concat(args.production ? [
-        new webpack.optimize.UglifyJsPlugin()
-      ] : []),
+      ],
       module: {
         rules: [
           {
@@ -48,8 +53,8 @@ gulp.task('scripts', (cb) => {
       },
       resolve: {
         alias: {
-          helpers: path.resolve(__dirname, 'app/scripts/helpers/'),
-          mixins: path.resolve(__dirname, 'app/scripts/mixins/')
+          helpers: path.resolve(projectRoot, 'app/scripts/helpers/'),
+          mixins: path.resolve(projectRoot, 'app/scripts/mixins/')
         },
         extensions: ['.js', '.json', '.vue']
       }
@@ -57,7 +62,7 @@ gulp.task('scripts', (cb) => {
     webpack,
     (err, stats) => {
       if (err) return
-      log(`Finished '${colors.cyan('scripts')}'`, stats.toString({
+      console.log(`Finished 'scripts'`, stats.toString({
         chunks: false,
         colors: true,
         cached: false,

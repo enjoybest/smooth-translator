@@ -1,7 +1,4 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import OptionsApp from './components/OptionsApp.vue';
 
-new Vue({
-  el: '#app',
-  render: h => h(OptionsApp),
-});
+createApp(OptionsApp).mount('#app');

@@ -1,7 +1,7 @@
 import gulp from 'gulp'
 import gulpif from 'gulp-if'
 import livereload from 'gulp-livereload'
-import args from './lib/args'
+import args from './lib/args.js'
 
 gulp.task('fonts', () => {
   return gulp.src('app/fonts/**/*.{woff,woff2,ttf,eot,svg}')

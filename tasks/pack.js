@@ -1,8 +1,7 @@
 import gulp from 'gulp'
-import { colors, log } from 'gulp-util'
 import zip from 'gulp-zip'
-import packageDetails from '../package.json'
-import args from './lib/args'
+import packageDetails from '../package.json' with { type: 'json' }
+import args from './lib/args.js'
 
 function getPackFileType () {
   switch (args.vendor) {
@@ -15,7 +14,7 @@ function getPackFileType () {
   }
 }
 
-gulp.task('pack', ['build'], () => {
+gulp.task('pack', gulp.series('build', () => {
   let name = packageDetails.name
   let version = packageDetails.version
   let filetype = getPackFileType()
@@ -24,8 +23,6 @@ gulp.task('pack', ['build'], () => {
     .pipe(zip(filename))
     .pipe(gulp.dest('./packages'))
     .on('end', () => {
-      let distStyled = colors.magenta(`dist/${args.vendor}`)
-      let filenameStyled = colors.magenta(`./packages/${filename}`)
-      log(`Packed ${distStyled} to ${filenameStyled}`)
+      console.log(`Packed dist/${args.vendor} to ./packages/${filename}`)
     })
-})
+}))

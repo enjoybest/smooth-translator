@@ -1,4 +1,4 @@
-import wait from '../helpers/wait'
+import wait from '../helpers/wait.js'
 
 const URL = 'http://dict.youdao.com'
 

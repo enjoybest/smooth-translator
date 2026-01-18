@@ -1,6 +1,5 @@
 import _ from 'lodash'
-import storage from 'chrome-storage-wrapper'
-import migrateOptions from './migrate-options'
+import migrateOptions from './migrate-options.js'
 
 const defaults = {
   notifyTimeout: 5,
@@ -21,25 +20,28 @@ function isSiteEnabled(site) {
 }
 
 function setOptions(newOptions) {
-  storage.set(newOptions)
+  chrome.storage.local.set(newOptions)
   options = newOptions
 }
 
 function getOptions() {
-  if (_.empty(options)) {
+  if (_.isEmpty(options)) {
     return Promise.resolve(options)
   } else {
-    return storage.getAll()
+    return chrome.storage.local.get(null)
   }
 }
 
 function prepareOptions() {
-  storage.getAll()
-    .then(options => migrateOptions(options))
-    .then(options => _.defaults(options, defaults))
-    .then(options => setOptions(options))
+  chrome.storage.local.get(null)
+    .then(storedOptions => migrateOptions(storedOptions))
+    .then(migratedOptions => _.defaults(migratedOptions, defaults))
+    .then(finalOptions => setOptions(finalOptions))
   chrome.storage.onChanged.addListener(() => {
-    options = getOptions()
+    chrome.storage.local.get(null)
+      .then(storedOptions => migrateOptions(storedOptions))
+      .then(migratedOptions => _.defaults(migratedOptions, defaults))
+      .then(finalOptions => options = finalOptions)
   })
 }
 

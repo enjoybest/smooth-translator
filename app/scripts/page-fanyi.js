@@ -1,5 +1,5 @@
 import { trim } from 'lodash'
-import wait from './helpers/wait'
+import wait from './helpers/wait.js'
 
 function inputSource (text) {
   document.querySelector('#inputOriginal').value = text

@@ -1,3 +1,7 @@
+### 适配 Chrome Manifest V3
+- package.json 中的 devDependencies 版本已更新
+- 功能无变化
+
 <h3 align="center">穆译 ( Smooth Translator )</h3>
 
 <p align="center">让你沉浸在阅读中的划词翻译利器</p>

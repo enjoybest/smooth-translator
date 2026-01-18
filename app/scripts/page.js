@@ -1,21 +1,19 @@
-import $ from 'jquery'
-import Vue from 'vue'
-import { dispatchMessage } from './helpers/message'
-import { toggleLinkInspectMode } from './helpers/utils'
+import { createApp } from 'vue'
+import { dispatchMessage } from './helpers/message.js'
+import { toggleLinkInspectMode } from './helpers/utils.js'
 import ResultList from './components/ResultList.vue'
 
-let app = null;
+let appInstance = null;
 
 function getApp () {
-  if ($('#cst-list').length == 0) {
-    $('<div id="cst-list"></div>').appendTo('body')
-    app = new Vue({
-      el: '#cst-list',
-      render: h => h(ResultList),
-    });
+  if (!document.getElementById('cst-list')) {
+    const div = document.createElement('div')
+    div.id = 'cst-list'
+    document.body.appendChild(div)
+    appInstance = createApp(ResultList).mount('#cst-list');
   }
 
-  return app.$children[0]
+  return appInstance
 }
 
 function translate (message, sender, sendResponse) {

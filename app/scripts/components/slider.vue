@@ -4,7 +4,8 @@
       :min="min"
       :max="max"
       :value="value"
-      @input="changeValue" />
+      @input="changeValue"
+      @change.stop />
     <span class="label label-info">{{ value }} 秒</span>
   </div>
 </template>

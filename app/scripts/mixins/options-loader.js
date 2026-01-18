@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import storage from 'chrome-storage-wrapper';
-import defaults from '../config/defaults';
+import defaults from '../config/defaults.js';
 
 export default {
   data() {
@@ -10,16 +9,17 @@ export default {
   },
   methods: {
     initOptions() {
-      storage.addChangeListener(() => this.loadOptions());
-      storage.getAll().then(options => console.log(options));
+      chrome.storage.onChanged.addListener(() => this.loadOptions());
       return this.loadOptions();
     },
     loadOptions() {
-      return storage.getAll().then(options => this.options = options);
+      return chrome.storage.local.get(null).then(options => {
+        this.options = Object.assign({}, defaults, options);
+      });
     },
     updateOption(name, value) {
       this.options[name] = value;
-      storage.set(name, value);
+      chrome.storage.local.set({ [name]: value });
     },
     saveRule(rule) {
       this.options.siteRules[rule.site] = rule.enabled

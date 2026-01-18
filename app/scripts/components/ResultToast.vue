@@ -1,47 +1,68 @@
 <template>
   <transition name="fade" @after-leave="close">
-    <div class="cst-result-toast" v-if="result.show">
+    <div class="cst-result-toast" v-if="localResult.show">
       <a href="javascript:;" class="close" @click="hide">&times;</a>
-      <result :result="result" theme="dark"></result>
+      <result :result="localResult" theme="dark"></result>
     </div>
   </transition>
 </template>
 
 <script>
+import { ref, onBeforeUnmount } from 'vue';
 import { clearSelection } from '../helpers/selection';
 import Result from './Result.vue';
 
 export default {
   props: ['result'],
-  data() {
-    return {
-      timer: null
-    };
-  },
-  created() {
-    this.translate();
-  },
-  methods: {
-    translate() {
+  setup(props, { emit }) {
+    const localResult = ref({ ...props.result });
+    const timer = ref(null);
+
+    const translate = () => {
       const message = {
         type: 'translate',
-        text: this.result.text,
+        text: localResult.value.text,
         from: 'page'
       };
       chrome.runtime.sendMessage(message, (result) => {
-        this.result = Object.assign(this.result, result);
-        this.timer = setTimeout(() => {
-          this.result.show = false;
-        }, this.result.timeout * 1000);
+        Object.assign(localResult.value, result);
+
+        // Set auto-close timer if timeout is provided
+        if (result.timeout) {
+          timer.value = setTimeout(() => {
+            localResult.value.show = false;
+          }, result.timeout * 1000);
+        }
       });
-    },
-    hide() {
+    };
+
+    const hide = () => {
       clearSelection();
-      this.result.show = false;
-    },
-    close() {
-      this.$emit('close');
-    }
+      localResult.value.show = false;
+      if (timer.value) {
+        clearTimeout(timer.value);
+      }
+    };
+
+    const close = () => {
+      emit('close');
+    };
+
+    // Start translation when component is created
+    translate();
+
+    // Cleanup timer on unmount
+    onBeforeUnmount(() => {
+      if (timer.value) {
+        clearTimeout(timer.value);
+      }
+    });
+
+    return {
+      localResult,
+      hide,
+      close
+    };
   },
   components: {
     Result
